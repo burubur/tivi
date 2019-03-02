@@ -1,0 +1,9 @@
+{
+  "name": "tivi",
+  "version": "0.5.0",
+  "main": "index.js",
+  "author": "Burhan Mubarok <burhanmubarok@gmail.com>",
+  "license": "MIT",
+  "description": "a tv show",
+  "repository": "https://github.com/burubur/tivi"
+}
