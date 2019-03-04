@@ -32,7 +32,7 @@ function * tvDiscover () {
 
 
 function * wellcome () {
-    yield console.log("redux-saga middleware applied!")
+    yield console.log("Hey!")
 }
 
 const middleware = function * sagas () {
