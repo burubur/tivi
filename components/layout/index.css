@@ -1,0 +1,23 @@
+.header {
+    color: white;
+    padding: 0px 24px 0px;
+}
+
+.brand {
+    width: 48px;
+}
+
+.footer {
+    padding: 0px;
+    text-align: center;
+    line-height: 64px;
+    height: 64px;
+    background-color: lightslategray;
+    color: black;
+}
+
+.body {
+    min-width: 100vw;
+    min-height: calc(100vh - 128px);
+    padding: 24px;
+}
