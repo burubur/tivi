@@ -1,5 +1,5 @@
 import { all, put, takeEvery } from "redux-saga/effects"
-import { searchTvDiscover, loadTvDiscover } from "./api" 
+import { searchTvDiscover, loadTvDiscover, loadTvDiscoverSummary } from "./api" 
 
 function * search ({payload}) {
     try {
@@ -25,9 +25,22 @@ function * fetchTvDiscover ({payload}) {
     }
 }
 
+function * fetchTvDiscoverSummary ({payload}) {
+    try {
+        const response = yield loadTvDiscoverSummary(payload)
+        yield put({
+            type: "activeDiscover/tvDiscoverSummaryLoaded",
+            payload: response
+        })
+    } catch (e) {
+        console.log("error on searching service, got:", e);
+    }
+}
+
 function * tvDiscover () {
     yield takeEvery("tvDiscover/search", search)
     yield takeEvery("tvDiscover/load", fetchTvDiscover)
+    yield takeEvery("activeDiscover/setTvShow", fetchTvDiscoverSummary)
 }
 
 

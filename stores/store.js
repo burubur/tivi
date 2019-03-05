@@ -56,8 +56,71 @@ export const tvDiscover = (state = initialTvDiscover, { type, payload }) => {
     }
 }
 
+const initialActiveDiscover = {
+    summaryLoading: false,
+    tvID: 0,
+    seasonID: 0,
+    isFavorited: false,
+}
+
+export const activeDiscover = (state = initialActiveDiscover, { type, payload }) => {
+    switch (type) {
+        case "activeDiscover/setTvShow":
+            return {
+                ...state,
+                tvID: payload.tvID,
+                seasonID: payload.seasonID
+            }
+
+        case "activeDiscover/setSession":
+            console.log("current state: ", state)
+            console.log("tvID: ", payload.sessionID)
+            return {
+                ...state,
+                seasonID: payload.sessionID
+            }
+
+        case "activeDiscover/unset":
+            console.log("current state: ", state)
+            return {
+                state
+            }
+
+        case "activeDiscover/loadTvDiscoverSummary":
+            console.log("load summary")
+            return {
+                ...state,
+                summaryLoading: true
+            }
+
+        case "activeDiscover/tvDiscoverSummaryLoaded":
+            console.log("summary loaded")
+            return {
+                ...state,
+                summaryLoading: false,
+                ...payload
+            }
+
+        case "activeDiscover/loadEpisode":
+            console.log("load episode")
+            return {
+                state
+            }
+
+        case "activeDiscover/episodeLoaded":
+            console.log("episode loaded")
+            return {
+                state
+            }
+
+        default:
+            return state
+    }
+}
+
 const reducers = combineReducers({
-    tvDiscover
+    tvDiscover,
+    activeDiscover
 })
 
 const middleware = createSagaMiddleware()
