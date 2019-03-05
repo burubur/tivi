@@ -13,7 +13,16 @@ class Discover extends Component {
     }
 
     showDetail(id) {
-        this.props.history.push("/discovery/"+id)
+        const { history, dispatch } = this.props
+        dispatch({
+            type: "activeDiscover/setTvShow",
+            payload: {
+                tvID: id,
+                seasonID: 1
+            }
+        })
+
+        history.push("/discovery/"+id)
     }
 
     load(page) {

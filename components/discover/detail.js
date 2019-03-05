@@ -1,10 +1,12 @@
 import React, { Component } from "react"
+import { connect } from "react-redux"
 import { Row, Col, Card, List, Icon } from "antd"
 import { twoColumn } from "./../constants/flex"
 
 const APIKEY = "73be4d439ae0fc2041dab7522c37c14f"
-const BASE_URL = "http://127.0.0.1:6006"
+const BASE_URL = "http://35.185.191.136:8080"
 
+@connect(store => store)
 class DiscoveryDetail extends Component {
     state = {
         loading: false,
@@ -17,6 +19,7 @@ class DiscoveryDetail extends Component {
     }
     componentDidMount () {
         let tvID = this.props.match.params.id
+        console.log("tvID", tvID)
         this.setState({
             loading: true,
         })
@@ -56,6 +59,8 @@ class DiscoveryDetail extends Component {
     }
     
     render() {
+        let { activeDiscover } = this.props
+        console.log("active", activeDiscover)
         let summary = {...this.state.item, ...this.state.detail}
         const action = [
             <Icon type="share-alt" key={summary.id} />,
