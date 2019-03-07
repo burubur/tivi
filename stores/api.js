@@ -26,7 +26,17 @@ export const loadTvDiscoverSummary = async ({tvID}) => {
         const response = await fetch(`${BASE_URL}/tv/${tvID}?api_key=${APIKEY}`);
         return await response.json();
     } catch (e) {
-        console.log("failed on load tv shows, got: ", e)
+        console.log("failed on load tv shows summary, got: ", e)
+        return null
+    }
+}
+
+export const loadTvDiscoverEpisode = async ({tvID, seasonID}) => {
+    try {
+        const response = await fetch(`${BASE_URL}/tv/${tvID}/season/${seasonID}?api_key=${APIKEY}`);
+        return await response.json();
+    } catch (e) {
+        console.log("failed on load tv shows detail, got: ", e)
         return null
     }
 }
