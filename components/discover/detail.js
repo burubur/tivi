@@ -3,8 +3,14 @@ import { connect } from "react-redux"
 import { Row, Col, Card, List, Icon, Tabs } from "antd"
 import { twoColumn } from "./../constants/flex"
 
+const favKey = "local-favorites"
+
 @connect(store => store)
 class DiscoveryDetail extends Component {
+    state = {
+        isFavorited: false
+    }
+
     componentDidMount () {
         let tvID = this.props.match.params.id
         const { dispatch } = this.props
@@ -15,16 +21,62 @@ class DiscoveryDetail extends Component {
                 seasonID: 0
             }
         })
+        this.checkFavorite(tvID)
+    }
+
+    checkFavorite(tvID) {
+        let favVal = localStorage.getItem(favKey)
+        if (favVal === null) {
+            return
+        } else {
+            let indexOfFav = favVal.indexOf(tvID)
+            if (indexOfFav < 0) {
+                return
+            }
+            this.setState({
+                isFavorited: true
+            })
+        }
+    }
+
+    onFavorite(tvID) {
+        let favVal = localStorage.getItem(favKey)
+        if (favVal !== null) {
+            let currentFavs = JSON.parse(favVal)
+            let existingFavs = Array.from(currentFavs)
+            let indexOfNewFav = existingFavs.indexOf(tvID)
+            if (indexOfNewFav < 0) {
+                let newFavs = [tvID, ...currentFavs]
+                this.storeFavorite(favKey, newFavs)
+                this.setState({
+                    isFavorited: true
+                })
+            } else {
+                existingFavs.splice(indexOfNewFav, 1)
+                this.storeFavorite(favKey, existingFavs)
+                this.setState({
+                    isFavorited: false
+                })
+            }
+        } else {
+            this.storeFavorite(favKey, [tvID])
+        }
+    }
+
+    storeFavorite(key, val) {
+        let stringifiedFavs = JSON.stringify(val)
+        localStorage.setItem(key, stringifiedFavs)
     }
     
     render() {
         let { activeDiscover, dispatch } = this.props
         let { summary, season } = activeDiscover
+        let theme = this.state.isFavorited ? "twoTone" : "outlined"
 
         const action = [
             <Icon type="share-alt" key={summary.id} />,
             <Icon type="eye" key={summary.id} />,
-            <Icon type="star" key={summary.id} />
+            <span onClick={()=> this.onFavorite(summary.id)}><Icon type="star" key={summary.id} theme={theme} /></span>
         ]
 
         return (
