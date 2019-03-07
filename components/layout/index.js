@@ -1,9 +1,11 @@
 import React, { Component } from "react"
-import { BrowserRouter as Router, Link } from "react-router-dom"
+import { BrowserRouter as Router } from "react-router-dom"
 import { connect } from "react-redux"
-import { Layout, Row, Col, Icon, Input } from "antd"
+import { Layout, Row, Col, Input } from "antd"
 import { Body } from "./body"
-import { Single } from "./../constants"
+import { Brand, User } from "./header"
+import Footer from "./footer"
+import { single } from "./../constants"
 import "./index.css"
 
 @connect(store => store)
@@ -23,7 +25,7 @@ class Base extends Component {
                     <Layout.Header className="header">
                         <Row type="flex" justify="space-between">
                             <Col><Brand /></Col>
-                            <Col {...Single}>
+                            <Col {...single}>
                                 <Input.Search onSearch={onSearch} placeholder="type title, or artist, or ..." style={{textOverflow: "ellipsis", whiteSpace: "nowrap"}} />
                             </Col>
                             <Col><User /></Col>
@@ -33,7 +35,7 @@ class Base extends Component {
                         <Body />
                     </Layout.Content>
                     <Layout.Footer className="footer">
-                        <CopyRight />
+                        <Footer />
                     </Layout.Footer>
                 </Layout>
             </Router>
@@ -41,32 +43,4 @@ class Base extends Component {
     }
 }
 
-const Brand = () => {
-    return(
-        <Link to="/">
-            <img alt="brand" src="https://storage.googleapis.com/stat-images/tivi-brand.png" className="brand"/>
-        </Link>
-    )
-}
-
-const User = () => {
-    return(
-        <Link to="/profile">
-            <Icon type="user" style={{cursor: "pointer"}} />
-        </Link>
-    )
-}
-
-const CopyRight = () => {
-    const author = "@burhanmubarok"
-    const year = new Date().getFullYear()
-    return (
-        <div className="footer">
-            Copyright {author} {year}
-        </div>
-    )
-}
-
-export {
-    Base
-}
+export default Base

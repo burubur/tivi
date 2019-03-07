@@ -1,5 +1,5 @@
 import React from "react"
-import { Base } from "./layout"
+import Base from "./layout"
 const RootComponent = () => <Base />
 
 export {
