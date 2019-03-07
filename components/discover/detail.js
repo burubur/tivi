@@ -33,9 +33,7 @@ class DiscoveryDetail extends Component {
                     <Col {...twoColumn}>
                         <Card
                             loading={summary.loading}
-                            bordered={false}
-                            style={{borderRadius: 8}}
-                            cover={<img alt="cover" src={("https://image.tmdb.org/t/p/w500/"+summary.poster_path)} style={{borderTopLeftRadius: 8, borderTopRightRadius: 8}} />}
+                            cover={<img alt="cover" src={("https://image.tmdb.org/t/p/w500/"+summary.poster_path)} />}
                             actions={action}
                         >
                             <Card.Meta
