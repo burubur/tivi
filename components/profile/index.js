@@ -1,9 +1,9 @@
 import React from "react"
 import { Row, Col, Card, List, Divider, Tabs } from "antd"
-import { Multiple } from "./../constants"
+import { multiple } from "./../constants"
 const Profile = () => (
     <Row type="flex" justify="center">
-        <Col {...Multiple}>
+        <Col {...multiple}>
             <Card
                 cover={<img alt="example" src="https://storage.googleapis.com/stat-images/blank-user.png" style={{borderTopLeftRadius: 8, borderTopRightRadius: 8}} />}
                 style={{borderRadius: 8}}
