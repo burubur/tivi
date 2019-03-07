@@ -1,5 +1,10 @@
 import { all, put, takeEvery } from "redux-saga/effects"
-import { searchTvDiscover, loadTvDiscover, loadTvDiscoverSummary } from "./api" 
+import {
+    searchTvDiscover,
+    loadTvDiscover,
+    loadTvDiscoverSummary,
+    loadTvDiscoverEpisode,
+} from "./api" 
 
 function * search ({payload}) {
     try {
@@ -13,7 +18,7 @@ function * search ({payload}) {
     }
 }
 
-function * fetchTvDiscover ({payload}) {
+function * activateTvDiscover ({payload}) {
     try {
         const response = yield loadTvDiscover(payload)
         yield put({
@@ -25,22 +30,39 @@ function * fetchTvDiscover ({payload}) {
     }
 }
 
-function * fetchTvDiscoverSummary ({payload}) {
+function * activateTvShow ({payload}) {
     try {
         const response = yield loadTvDiscoverSummary(payload)
         yield put({
             type: "activeDiscover/tvDiscoverSummaryLoaded",
             payload: response
         })
+        yield put({
+            type: "activeDiscover/loadTvDiscoverEpisode",
+            payload: payload
+        })
     } catch (e) {
         console.log("error on searching service, got:", e);
     }
 }
 
+function * fetchTvDiscoverEpisose ({payload}) {
+    try {
+        const response = yield loadTvDiscoverEpisode(payload)
+        yield put({
+            type: "activeDiscover/tvDiscoverEpisodeLoaded",
+            payload: response
+        })
+    } catch (e) {
+        console.log("error on episode api, got:", e);
+    }
+}
+
 function * tvDiscover () {
     yield takeEvery("tvDiscover/search", search)
-    yield takeEvery("tvDiscover/load", fetchTvDiscover)
-    yield takeEvery("activeDiscover/setTvShow", fetchTvDiscoverSummary)
+    yield takeEvery("tvDiscover/load", activateTvDiscover)
+    yield takeEvery("activeDiscover/setTvShow", activateTvShow)
+    yield takeEvery("activeDiscover/loadTvDiscoverEpisode", fetchTvDiscoverEpisose)
 }
 
 
