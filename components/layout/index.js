@@ -16,11 +16,17 @@ class Base extends Component {
             if (query !== "") {
                 dispatch({
                     type: "tvDiscover/search",
-                    payload: query
+                    payload: {
+                        query: query,
+                        page: 1
+                    }
                 })
             } else {
                 dispatch({
                     type: "tvDiscover/load",
+                    payload: {
+                        page: 1
+                    }
                 })
             }
         }

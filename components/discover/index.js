@@ -20,18 +20,40 @@ class Discover extends Component {
     load(page) {
         this.props.dispatch({
             type: "tvDiscover/load",
-            payload: page || 1
+            payload: {
+                page: page || 1
+            }
         })
+    }
+
+    search(query, page) {
+        console.log("search")
+        this.props.dispatch({
+            type: "tvDiscover/search",
+            payload: {
+                query: query,
+                page: page || 1
+            }
+        })
+    }
+
+    loadOrSearch(page, isSearch, query) {
+        if (isSearch) {
+            this.search(query, page)
+        } else {
+            this.load(page)
+        }
     }
 
     render() {
         let { tvDiscover } = this.props
+        let { isSearch, query } = tvDiscover
         return (
             <div>
                 <InfiniteScroll
                     initialLoad={false}
                     pageStart={1}
-                    loadMore={page => this.load(page)}
+                    loadMore={page => this.loadOrSearch(page, isSearch, query)}
                     hasMore={!tvDiscover.loading && tvDiscover.hasMore}
                     useWindow={true}
                 >

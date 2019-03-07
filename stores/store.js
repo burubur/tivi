@@ -4,6 +4,7 @@ import { composeWithDevTools } from "redux-devtools-extension"
 import middlewares from "./middleware"
 
 const initialTvDiscover = {
+    isSearch: false,
     loading: false,
     hasMore: true,
     page: 0,
@@ -17,7 +18,9 @@ export const tvDiscover = (state = initialTvDiscover, { type, payload }) => {
         case "tvDiscover/search":
             return {
                 ...state,
-                loading: true
+                loading: true,
+                isSearch: true,
+                query: payload.query
             }
 
         case "tvDiscover/searched":
@@ -33,6 +36,7 @@ export const tvDiscover = (state = initialTvDiscover, { type, payload }) => {
         case "tvDiscover/load":
             return {
                 ...state,
+                isSearch: false,
                 loading: true
             }
 
