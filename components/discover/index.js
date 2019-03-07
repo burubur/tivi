@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import { connect } from "react-redux"
 import InfiniteScroll from "react-infinite-scroller"
 import { Col, Row, Card, Icon, Spin } from "antd"
-import { Multiple } from "./../constants"
+import { multiple } from "./../constants"
 
 @connect(store => store)
 class Discover extends Component {
@@ -13,15 +13,7 @@ class Discover extends Component {
     }
 
     showDetail(id) {
-        const { history, dispatch } = this.props
-        dispatch({
-            type: "activeDiscover/setTvShow",
-            payload: {
-                tvID: id,
-                seasonID: 1
-            }
-        })
-
+        const { history } = this.props
         history.push("/discovery/"+id)
     }
 
@@ -45,7 +37,7 @@ class Discover extends Component {
                 >
                     <Row type="flex" justify="center" gutter={16}>
                         {Array.from(tvDiscover.results).map(item => (
-                            <Col {...Multiple} key={item.id} onClick={() => this.showDetail(item.id)}>
+                            <Col {...multiple} key={item.id} onClick={() => this.showDetail(item.id)}>
                                 <TvDiscover {...item} />
                             </Col>
                         ))}

@@ -1,67 +1,26 @@
 import React, { Component } from "react"
 import { connect } from "react-redux"
-import { Row, Col, Card, List, Icon } from "antd"
+import { Row, Col, Card, List, Icon, Tabs } from "antd"
 import { twoColumn } from "./../constants/flex"
-
-const APIKEY = "73be4d439ae0fc2041dab7522c37c14f"
-const BASE_URL = "https://35.185.191.136:8080"
 
 @connect(store => store)
 class DiscoveryDetail extends Component {
-    state = {
-        loading: false,
-        item: {
-
-        },
-        detail: {
-            episodes: [],
-        },
-    }
     componentDidMount () {
         let tvID = this.props.match.params.id
-        console.log("tvID", tvID)
-        this.setState({
-            loading: true,
-        })
-        fetch(`${BASE_URL}/tv/${tvID}?api_key=${APIKEY}`)
-        .then(response => (
-            response.json()
-            .then(data => {
-                this.setState({
-                    loading: false,
-                    item: data,
-                })
-            })
-            .catch(e => {
-                console.log("failed to parse the response, got: ", e)
-            })
-        ))
-        .catch(e => {
-            console.log("failed on API request, got: ", e)
-        })
-        
-        fetch(`${BASE_URL}/tv/${tvID}/season/1?api_key=${APIKEY}`)
-        .then(response => (
-            response.json()
-            .then(data => {
-                this.setState({
-                    loading: false,
-                    detail: data,
-                })
-            })
-            .catch(e => {
-                console.log("failed to parse the response, got: ", e)
-            })
-        ))
-        .catch(e => {
-            console.log("failed on API request, got: ", e)
+        const { dispatch } = this.props
+        dispatch({
+            type: "activeDiscover/setTvShow",
+            payload: {
+                tvID: tvID,
+                seasonID: 0
+            }
         })
     }
     
     render() {
-        let { activeDiscover } = this.props
-        console.log("active", activeDiscover)
-        let summary = {...this.state.item, ...this.state.detail}
+        let { activeDiscover, dispatch } = this.props
+        let { summary, season } = activeDiscover
+
         const action = [
             <Icon type="share-alt" key={summary.id} />,
             <Icon type="eye" key={summary.id} />,
@@ -73,20 +32,20 @@ class DiscoveryDetail extends Component {
                 <Row type="flex" justify="center" gutter={24}>
                     <Col {...twoColumn}>
                         <Card
-                            loading={this.state.loading}
+                            loading={summary.loading}
                             bordered={false}
                             style={{borderRadius: 8}}
-                            cover={<img alt="cover" src={("https://image.tmdb.org/t/p/w500/"+this.state.item.poster_path)} style={{borderTopLeftRadius: 8, borderTopRightRadius: 8}} />}
+                            cover={<img alt="cover" src={("https://image.tmdb.org/t/p/w500/"+summary.poster_path)} style={{borderTopLeftRadius: 8, borderTopRightRadius: 8}} />}
                             actions={action}
                         >
                             <Card.Meta
-                                title={this.state.item.name}
-                                description={<Desc {...this.state.item} />}
+                                title={summary.name}
+                                description={<Desc {...summary} />}
                             />
                         </Card>
                     </Col>
                     <Col {...twoColumn}>
-                        <Episodes {...summary} />
+                        <Detail summary={summary} episode={season.episode} dispatch={dispatch} />
                     </Col>
                 </Row>
             </div>
@@ -94,65 +53,74 @@ class DiscoveryDetail extends Component {
     }
 }
 
-const Desc = (data) => {
-    let dt = new Date(data.first_air_date)
+const Desc = (summary) => {
+    let dt = new Date(summary.first_air_date)
     return (
         <div>
             <span>Year: {dt.getFullYear()}</span>
             <br />
-            <span>Seasson: {data.number_of_seasons}</span>
+            <span>Seasson: {summary.number_of_seasons}</span>
             <br />
-            <span>Episode: {data.number_of_episodes}</span>
+            <span>Episode: {summary.number_of_episodes}</span>
+            <br />
+            <span>Vote: {summary.vote_average}</span>
         </div>
     )
 }
 
-class Episodes extends Component {
-    render() {
-        let data = this.props
-        return (
-            <List
-                loading={data.loading}
-                itemLayout="vertical"
-                size="small"
-                bordered
-                dataSource={data.episodes}
-                renderItem={itemData => <EpisodeItem {...itemData} />}
-                header={<EpisodeHeader {...data} />}
-            >
-            </List>
-        )
+const Detail = ({ summary, episode, dispatch }) => {
+    let tvID = summary.id
+    const onSeasonChange = seasonID => {
+        dispatch({
+            type: "activeDiscover/loadTvDiscoverEpisode",
+            payload: {
+                tvID: tvID,
+                seasonID: seasonID
+            }
+        })
     }
+    return (
+        <div>
+            {summary && summary.seasons && (
+                <Tabs
+                    defaultActiveKey="0"
+                    onChange={onSeasonChange}
+                >
+                    {Array.from(summary.seasons).map(sea => (
+                        <Tabs.TabPane
+                            tab={sea.name}
+                            key={sea.season_number}
+                        >
+                            <Episodes {...episode} />
+                        </Tabs.TabPane>
+                    ))}
+                </Tabs>
+            )}
+        </div>
+    )
 }
 
-const EpisodeHeader = (data) => (
-    <div>
-        <span style={{fontWeight: "bold", fontSize: 20}}>Episodes</span>
-        <br />
-        <span>Seasson: {<SeasonLink {...data} />}</span>
-    </div>
-)
-
-const EpisodeItem = (data) => {
+const Episodes = ({ episodes, loading }) => {
     return (
-        <List.Item
-            extra={<Icon style={{fontSize: 24}} type="play-circle" onClick={(data) => console.log("let's watch...")}/>}
-            >
-            {data.episode_number}. {data.name}
-        </List.Item>
+        <div>
+            {episodes && (
+                <List
+                    loading={loading}
+                    size="small"
+                    bordered
+                >
+                    {Array.from(episodes).map((epi, i) => (
+                        <List.Item key={epi.id}>
+                            <span style={{minWidth: "90%"}}>{i+1}. {epi.name}</span>
+                            <span style={{minWidth: "10%", textAlign: "right"}}><Icon type="play-circle" theme="twoTone" style={{fontSize: 24}} /></span>
+                        </List.Item>
+                    ))}
+                </List>
+            )}
+        </div>
     )
 }
 
 export {
     DiscoveryDetail
-}
-
-const SeasonLink = seasons => {
-    let seasonLink = []
-    for(let i=1, l=seasons.number_of_seasons; i <= l; i++){
-        seasonLink.push(i);
-    }
-    return (
-        <span>{seasonLink.map(link => <span key={link} style={{fontWeight: "bold"}}>{link} </span>)}</span>
-    )
 }
