@@ -1,5 +1,6 @@
 import { combineReducers, applyMiddleware, createStore } from 'redux'
 import createSagaMiddleware from "redux-saga"
+import { composeWithDevTools } from "redux-devtools-extension"
 import middlewares from "./middleware"
 
 const initialTvDiscover = {
@@ -57,13 +58,22 @@ export const tvDiscover = (state = initialTvDiscover, { type, payload }) => {
 }
 
 const initialActiveDiscover = {
-    summaryLoading: false,
     tvID: 0,
-    seasonID: 0,
     isFavorited: false,
+    summary: {
+        loading: false
+    },
+    season: {
+        loading: false,
+        selectedSession: 1,
+        episode: {
+            loading: false,
+            episodes: []
+        }
+    }
 }
 
-export const activeDiscover = (state = initialActiveDiscover, { type, payload }) => {
+export const activeDiscover = (state = {...initialActiveDiscover}, { type, payload }) => {
     switch (type) {
         case "activeDiscover/setTvShow":
             return {
@@ -73,48 +83,64 @@ export const activeDiscover = (state = initialActiveDiscover, { type, payload })
             }
 
         case "activeDiscover/setSession":
-            console.log("current state: ", state)
-            console.log("tvID: ", payload.sessionID)
             return {
                 ...state,
-                seasonID: payload.sessionID
+                season: {
+                    ...state.season,
+                    selectedSession: payload.sessionID
+                }
             }
 
         case "activeDiscover/unset":
-            console.log("current state: ", state)
             return {
-                state
+                initialActiveDiscover
             }
 
         case "activeDiscover/loadTvDiscoverSummary":
-            console.log("load summary")
             return {
                 ...state,
-                summaryLoading: true
+                summary: {
+                    loading: true
+                }
             }
 
         case "activeDiscover/tvDiscoverSummaryLoaded":
-            console.log("summary loaded")
             return {
                 ...state,
-                summaryLoading: false,
-                ...payload
+                summary:{
+                    loading: false,
+                    ...payload
+                }
             }
 
-        case "activeDiscover/loadEpisode":
-            console.log("load episode")
+        case "activeDiscover/loadTvDiscoverEpisode":
             return {
-                state
+                ...state,
+                season: {
+                    ...state.season,
+                    episode: {
+                        ...state.season.episode,
+                        loading: true
+                    }
+                }
             }
 
-        case "activeDiscover/episodeLoaded":
-            console.log("episode loaded")
+        case "activeDiscover/tvDiscoverEpisodeLoaded":
             return {
-                state
+                ...state,
+                season: {
+                    ...state.season,
+                    episode: {
+                        loading: false,
+                        ...payload
+                    }
+                }
             }
 
         default:
-            return state
+            return {
+                ...state
+            }
     }
 }
 
@@ -124,7 +150,8 @@ const reducers = combineReducers({
 })
 
 const middleware = createSagaMiddleware()
-const store = createStore(reducers, applyMiddleware(middleware))
+
+const store = createStore(reducers, composeWithDevTools(applyMiddleware(middleware)))
 middleware.run(middlewares)
 
 export default store
