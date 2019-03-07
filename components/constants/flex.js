@@ -1,4 +1,4 @@
-const Single = {
+const single = {
     xs: { span: 16 },
     sm: { span: 16 },
     md: { span: 16 },
@@ -7,7 +7,7 @@ const Single = {
     xxl: { span: 8 }
 }
 
-const Multiple = {
+const multiple = {
     xs: { span: 24 },
     sm: { span: 20 },
     md: { span: 5 },
@@ -26,7 +26,7 @@ const twoColumn = {
 }
 
 export {
-    Single,
-    Multiple,
+    single,
+    multiple,
     twoColumn,
 }
