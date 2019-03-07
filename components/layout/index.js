@@ -13,7 +13,6 @@ class Base extends Component {
     render() {
         const { dispatch } = this.props
         const onSearch = (query) => {
-            console.log(query)
             if (query !== "") {
                 dispatch({
                     type: "tvDiscover/search",
