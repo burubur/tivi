@@ -1,6 +1,7 @@
 const APIKEY = "73be4d439ae0fc2041dab7522c37c14f"
 // const BASE_URL = "https://35.185.191.136:8080"
-const BASE_URL = "https://35.198.203.55:8080"
+// const BASE_URL = "https://35.198.203.55:8080"
+const BASE_URL = "http://localhost:8080"
 
 export const searchTvDiscover = async ({query, page}) => {
     let paging = ""
